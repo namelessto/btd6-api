@@ -7,9 +7,10 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-app.get("/towers/:info", (req, res) => {
+app.get("/towers", (req, res) => {
   let jsonRes = [];
-  if (req.params.info === "basic") {
+  const allData = req.query.allData;
+  if (allData === "true") {
     jsonRes = handleAllTowers(true);
   } else {
     jsonRes = handleAllTowers(false);
@@ -31,7 +32,7 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-function handleAllTowers(needBasic) {
+function handleAllTowers(allData) {
   const towers = [];
   let tower = {};
 
@@ -41,7 +42,7 @@ function handleAllTowers(needBasic) {
   for (const file of files) {
     // Load the JSON file into a JavaScript variable.
     const jsonData = JSON.parse(fs.readFileSync(folderPath + "/" + file));
-    if (needBasic) {
+    if (allData === false) {
       const desiredProps = ["id", "name", "image", "inGameDesc"];
 
       desiredProps.forEach((prop) => {
