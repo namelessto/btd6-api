@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const queryString = require("querystring");
 
 const app = express();
 const port = 3000;
@@ -8,15 +9,12 @@ const port = 3000;
 app.use(bodyParser.json());
 
 app.get("/towers", (req, res) => {
-  let jsonRes = [];
-  const allData = req.query.allData;
-  if (allData === "true") {
-    jsonRes = handleAllTowers(true);
-  } else {
-    jsonRes = handleAllTowers(false);
-  }
+  let jsonResponse = [];
+  const { allData } = req.query;
+  const shouldReturnAllData = allData === "true";
+  jsonResponse = handleAllTowers(shouldReturnAllData);
 
-  res.json(jsonRes);
+  res.json(jsonResponse);
 });
 
 app.get("/tower/:id", (req, res) => {
@@ -42,8 +40,8 @@ function handleAllTowers(allData) {
     let tower = {}; // create a new tower object in each iteration
 
     // Load the JSON file into a JavaScript variable.
-    const jsonData = JSON.parse(fs.readFileSync(folderPath + "/" + file));
-    if (allData === false) {
+    const jsonData = JSON.parse(fs.readFileSync(`${folderPath}/${file}`));
+    if (!allData) {
       const desiredProps = ["id", "name", "image", "inGameDesc"];
 
       desiredProps.forEach((prop) => {
@@ -52,7 +50,7 @@ function handleAllTowers(allData) {
     } else {
       tower = jsonData;
     }
-    console.log(tower["id"]);
+    // console.log(tower["id"]);
 
     // Add the JSON data to the array.
     towers.push(tower);
