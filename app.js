@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 app.get("/towers", (req, res) => {
   let jsonRes = [];
-  const { allData } = req.query;
+  const allData = req.query.allData;
   if (allData === "true") {
     jsonRes = handleAllTowers(true);
   } else {
@@ -21,7 +21,7 @@ app.get("/towers", (req, res) => {
 
 app.get("/tower/:id", (req, res) => {
   const fileID = req.params.id;
-  const filePath = `./BTD6/${fileID}.json`;
+  const filePath = `./BTD6/Towers/${fileID}.json`;
 
   const jsonData = JSON.parse(fs.readFileSync(filePath));
 
@@ -34,12 +34,13 @@ app.listen(port, () => {
 
 function handleAllTowers(allData) {
   const towers = [];
-  let tower = {};
 
-  const folderPath = "./BTD6";
+  const folderPath = "./BTD6/Towers";
 
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
+    let tower = {}; // create a new tower object in each iteration
+
     // Load the JSON file into a JavaScript variable.
     const jsonData = JSON.parse(fs.readFileSync(folderPath + "/" + file));
     if (allData === false) {
@@ -51,6 +52,7 @@ function handleAllTowers(allData) {
     } else {
       tower = jsonData;
     }
+    console.log(tower["id"]);
 
     // Add the JSON data to the array.
     towers.push(tower);
