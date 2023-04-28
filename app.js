@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-const queryString = require("querystring");
 
 const app = express();
 const port = 3000;
@@ -37,9 +36,8 @@ function handleAllTowers(allData) {
 
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
-    let tower = {}; // create a new tower object in each iteration
+    let tower = {};
 
-    // Load the JSON file into a JavaScript variable.
     const jsonData = JSON.parse(fs.readFileSync(`${folderPath}/${file}`));
     if (!allData) {
       const desiredProps = ["id", "name", "image", "inGameDesc"];
@@ -50,9 +48,7 @@ function handleAllTowers(allData) {
     } else {
       tower = jsonData;
     }
-    // console.log(tower["id"]);
 
-    // Add the JSON data to the array.
     towers.push(tower);
   }
 
