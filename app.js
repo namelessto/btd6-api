@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 app.get("/towers", (req, res) => {
   let jsonRes = [];
-  const allData = req.query.allData;
+  const { allData } = req.query;
   if (allData === "true") {
     jsonRes = handleAllTowers(true);
   } else {
