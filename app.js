@@ -8,26 +8,17 @@ const port = 3000;
 app.use(bodyParser.json());
 
 app.get("/towers", (req, res) => {
-  const towers = [];
-  const folderPath = "./BTD6";
+  let jsonResponse = [];
+  const { allData } = req.query;
+  const shouldReturnAllData = allData === "true";
+  jsonResponse = handleAllTowers(shouldReturnAllData);
 
-  const files = fs.readdirSync(folderPath);
-  for (const file of files) {
-    // Load the JSON file into a JavaScript variable.
-    const jsonData = JSON.parse(fs.readFileSync(folderPath + "/" + file));
-
-    // Add the JSON data to the array.
-    towers.push(jsonData);
-  }
-
-  // Send the array of JSON files as a JSON response.
-  res.json(towers);
+  res.json(jsonResponse);
 });
 
-// GET a single todo by id
 app.get("/tower/:id", (req, res) => {
   const fileID = req.params.id;
-  const filePath = `./BTD6/${fileID}.json`;
+  const filePath = `./BTD6/Towers/${fileID}.json`;
 
   const jsonData = JSON.parse(fs.readFileSync(filePath));
 
@@ -37,3 +28,29 @@ app.get("/tower/:id", (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+function handleAllTowers(allData) {
+  const towers = [];
+
+  const folderPath = "./BTD6/Towers";
+
+  const files = fs.readdirSync(folderPath);
+  for (const file of files) {
+    let tower = {};
+
+    const jsonData = JSON.parse(fs.readFileSync(`${folderPath}/${file}`));
+    if (!allData) {
+      const desiredProps = ["id", "name", "image", "inGameDesc"];
+
+      desiredProps.forEach((prop) => {
+        tower[prop] = jsonData[prop];
+      });
+    } else {
+      tower = jsonData;
+    }
+
+    towers.push(tower);
+  }
+
+  return towers;
+}
