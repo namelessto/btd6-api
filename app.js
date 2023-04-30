@@ -31,23 +31,21 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
+const desiredPropsByCategory = {
+  towers: ["id", "name", "type", "inGameDesc", "image"],
+  heroes: ["id", "name", "inGameDesc", "image"],
+  maps: ["id", "name", "inGameDesc", "image"],
+  bloons: ["id", "name", "type", "image"],
+  bosses: ["id", "name", "type", "image"],
+};
+
 function handleAllItems(allData, folderPath, fileCategory) {
   const itemsToReturn = [];
-  let desiredProps = [];
 
-  if (fileCategory === "towers") {
-    desiredProps = ["id", "name", "type", "inGameDesc", "image"];
-  } else if (fileCategory === "heroes") {
-    desiredProps = ["id", "name", "inGameDesc", "image"];
-  } else if (fileCategory === "bloons") {
-    desiredProps = ["id", "name", "type", "image"];
-  } else if (fileCategory === "bosses") {
-    desiredProps = ["id", "name", "type", "image"];
-  } else if (fileCategory === "maps") {
-    desiredProps = ["id", "name", "inGameDesc", "image"];
-  }
+  const desiredProps = desiredPropsByCategory[fileCategory];
 
   const files = fs.readdirSync(folderPath);
+
   for (const file of files) {
     let item = {};
 
