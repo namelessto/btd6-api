@@ -11,7 +11,9 @@ app.get("/towers", (req, res) => {
   let jsonResponse = [];
   const { allData } = req.query;
   const shouldReturnAllData = allData === "true";
-  jsonResponse = handleAllTowers(shouldReturnAllData);
+  const folderPath = "./BTD6/Towers";
+  const fileCategory = "towers";
+  jsonResponse = handleAllItems(shouldReturnAllData, folderPath, fileCategory);
 
   res.json(jsonResponse);
 });
@@ -29,28 +31,37 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-function handleAllTowers(allData) {
-  const towers = [];
+function handleAllItems(allData, folderPath, fileCategory) {
+  const itemsToReturn = [];
+  let desiredProps = [];
 
-  const folderPath = "./BTD6/Towers";
+  if (fileCategory === "towers") {
+    desiredProps = ["id", "name", "type", "inGameDesc", "image"];
+  } else if (fileCategory === "heroes") {
+    desiredProps = ["id", "name", "inGameDesc", "image"];
+  } else if (fileCategory === "bloons") {
+    desiredProps = ["id", "name", "type", "image"];
+  } else if (fileCategory === "bosses") {
+    desiredProps = ["id", "name", "type", "image"];
+  } else if (fileCategory === "maps") {
+    desiredProps = ["id", "name", "inGameDesc", "image"];
+  }
 
   const files = fs.readdirSync(folderPath);
   for (const file of files) {
-    let tower = {};
+    let item = {};
 
     const jsonData = JSON.parse(fs.readFileSync(`${folderPath}/${file}`));
     if (!allData) {
-      const desiredProps = ["id", "name", "image", "inGameDesc"];
-
       desiredProps.forEach((prop) => {
-        tower[prop] = jsonData[prop];
+        item[prop] = jsonData[prop];
       });
     } else {
-      tower = jsonData;
+      item = jsonData;
     }
 
-    towers.push(tower);
+    itemsToReturn.push(item);
   }
 
-  return towers;
+  return itemsToReturn;
 }
